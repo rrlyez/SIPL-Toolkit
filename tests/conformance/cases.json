@@ -1,0 +1,95 @@
+[
+  {
+    "name": "assignment",
+    "source": "begin X := 5 end",
+    "initial_state": {},
+    "expected_state": {"X": 5},
+    "expected_ast": {
+      "type": "Program",
+      "body": {
+        "type": "Assign",
+        "name": "X",
+        "value": {"type": "Number", "value": 5}
+      }
+    }
+  },
+  {
+    "name": "arithmetic_priority",
+    "source": "begin X := 2 + 3 * 4 end",
+    "initial_state": {},
+    "expected_state": {"X": 14},
+    "expected_ast": {
+      "type": "Program",
+      "body": {
+        "type": "Assign",
+        "value": {
+          "type": "BinaryOp",
+          "operator": "+",
+          "right": {
+            "type": "BinaryOp",
+            "operator": "*"
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "sequence",
+    "source": "begin X := 5; Y := X + 2 end",
+    "initial_state": {},
+    "expected_state": {"X": 5, "Y": 7},
+    "expected_ast": {
+      "body": {
+        "type": "Sequence",
+        "first": {"type": "Assign"},
+        "second": {"type": "Assign"}
+      }
+    }
+  },
+  {
+    "name": "conditional",
+    "source": "begin if X > 0 then Y := 1 else Y := 0 end",
+    "initial_state": {"X": 5},
+    "expected_state": {"X": 5, "Y": 1},
+    "expected_ast": {
+      "body": {"type": "If"}
+    }
+  },
+  {
+    "name": "loop",
+    "source": "begin while X > 0 do X := X - 1 end",
+    "initial_state": {"X": 5},
+    "expected_state": {"X": 0},
+    "expected_ast": {
+      "body": {"type": "While"}
+    }
+  },
+  {
+    "name": "skip",
+    "source": "begin skip end",
+    "initial_state": {"X": 10},
+    "expected_state": {"X": 10},
+    "expected_ast": {
+      "body": {"type": "Skip"}
+    }
+  },
+  {
+    "name": "invalid_assignment",
+    "source": "begin X = 5 end",
+    "initial_state": {},
+    "expected_error": "syntax"
+  },
+  {
+    "name": "undefined_variable",
+    "source": "begin X := Y end",
+    "initial_state": {},
+    "expected_error": "runtime"
+  },
+  {
+    "name": "infinite_loop",
+    "source": "begin while 1 = 1 do skip end",
+    "initial_state": {},
+    "max_steps": 100,
+    "expected_error": "runtime"
+  }
+]
