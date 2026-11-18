@@ -1,0 +1,39 @@
+start: program
+
+program: "begin" sequence "end"
+
+?sequence: sequence ";" statement -> sequence
+         | statement
+
+?statement: NAME ":=" expr                       -> assign
+          | "if" condition "then" statement "else" statement -> if_stmt
+          | "while" condition "do" statement     -> while_stmt
+          | "begin" sequence "end"               -> block
+          | "skip"                               -> skip
+
+?expr: expr "+" product -> add
+     | expr "-" product -> sub
+     | product
+
+?product: product "*" atom -> mult
+        | atom
+
+?atom: NUMBER       -> number
+     | NAME         -> variable
+     | "(" expr ")" -> arith_group
+
+?condition: condition "∨" negation -> or_expr
+          | negation
+
+?negation: "¬" negation -> not_expr
+         | comparison
+
+?comparison: expr "=" expr      -> eq
+           | expr ">" expr      -> gr
+           | "(" condition ")"  -> bool_group
+
+NAME: /(?!begin\b|end\b|if\b|then\b|else\b|while\b|do\b|skip\b)[a-zA-Z][a-zA-Z0-9_]*/
+NUMBER: /-?[0-9]+/
+
+%import common.WS
+%ignore WS
